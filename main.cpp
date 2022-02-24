@@ -1,6 +1,9 @@
 #include <iostream>
+#include "Candidato.h"
 
 int main() {
-    std::cout << "oi teste" << std::endl;
+
+
+
     return 0;
 }
