@@ -2,7 +2,8 @@
 #define CANDIDATO_H
 
 #include <string>
-#include "Partido.h"
+
+class Partido;
 
 class Candidato {
     int numero;
@@ -10,15 +11,15 @@ class Candidato {
     std::string situacao;
     std::string nome;
     std::string nome_urna;
-    char sexo;
+    std::string sexo;
     std::string data_nasc;
     std::string destino_voto;
     int numero_partido;
-    Partido partido;
+    Partido* partido;
 
 public:
     Candidato(int numero, int votosNominais, const std::string &Situacao, const std::string &Nome,
-              const std::string &nomeUrna,char Sexo,const std::string &dataNasc, const std::string &destinoVoto,
+              const std::string &nomeUrna, const std::string &Sexo, const std::string &dataNasc, const std::string &destinoVoto,
               int numeroPartido);
 
     int getNumero() const;
@@ -41,9 +42,9 @@ public:
 
     void setNomeUrna(const std::string &nomeUrna);
 
-    char getSexo() const;
+    std::string getSexo() const;
 
-    void setSexo(char Sexo);
+    void setSexo(const std::string &Sexo);
 
     const std::string &getDataNasc() const;
 
@@ -57,9 +58,9 @@ public:
 
     void setNumeroPartido(int numeroPartido);
 
-    const Partido &getPartido() const;
+    Partido* getPartido() const;
 
-    void setPartido(const Partido &Partido);
+    void setPartido(Partido &Partido);
 
 };
 

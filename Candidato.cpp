@@ -1,7 +1,7 @@
 #include "Candidato.h"
 
-Candidato::Candidato(int numero, int votosNominais,const std::string &Situacao,const std::string &Nome, const std::string &nomeUrna,
-                     char Sexo, const std::string &dataNasc, const std::string &destinoVoto, int numeroPartido) {
+Candidato::Candidato(int numero, int votosNominais, const std::string &Situacao, const std::string &Nome, const std::string &nomeUrna,
+                     const std::string &Sexo, const std::string &dataNasc, const std::string &destinoVoto, int numeroPartido) {
     this->numero = numero;
     this->votos_nominais = votosNominais;
     this->situacao = Situacao;
@@ -53,11 +53,11 @@ void Candidato::setNomeUrna(const std::string &nomeUrna) {
     nome_urna = nomeUrna;
 }
 
-char Candidato::getSexo() const {
+std::string Candidato::getSexo() const {
     return sexo;
 }
 
-void Candidato::setSexo(char Sexo) {
+void Candidato::setSexo(const std::string &Sexo) {
     Candidato::sexo = Sexo;
 }
 
@@ -85,10 +85,10 @@ void Candidato::setNumeroPartido(int numeroPartido) {
     numero_partido = numeroPartido;
 }
 
-const Partido &Candidato::getPartido() const {
+Partido* Candidato::getPartido() const {
     return partido;
 }
 
-void Candidato::setPartido(const Partido &Partido) {
-    Candidato::partido = Partido;
+void Candidato::setPartido(Partido &Partido) {
+    Candidato::partido = &Partido;
 }

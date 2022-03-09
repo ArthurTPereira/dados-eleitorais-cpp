@@ -4,7 +4,7 @@
 #include <string>
 #include <list>
 
-#include "Candidato.h"
+class Candidato;
 
 class Partido {
     int numero_partido;
@@ -17,8 +17,7 @@ class Partido {
     std::list<Candidato*> lista_candidatos;
 
 public:
-    Partido(int nPartido, int votosLegenda, std::string nomePartido, std::string siglaPartido, int votosTotais,
-            int votosNominais);
+    Partido(int nPartido, int votosLegenda, const std::string &nomePartido, const std::string &siglaPartido);
 
     int getNumeroPartido() const;
 
@@ -48,6 +47,7 @@ public:
 
     void setCandidatosEleitos(int candidatosEleitos);
 
+    std::list<Candidato*> getListaCandidatos() const;
 };
 
 

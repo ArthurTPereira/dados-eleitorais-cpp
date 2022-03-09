@@ -1,5 +1,12 @@
 #include "Partido.h"
 
+Partido::Partido(int nPartido, int votosLegenda,const std::string &nomePartido,const std::string &siglaPartido) {
+    this->numero_partido = nPartido;
+    this->votos_legenda = votosLegenda;
+    this->nome_partido = nomePartido;
+    this->sigla_partido = siglaPartido;
+}
+
 int Partido::getNumeroPartido() const {
     return numero_partido;
 }
@@ -55,4 +62,10 @@ int Partido::getCandidatosEleitos() const {
 void Partido::setCandidatosEleitos(int candidatosEleitos) {
     candidatos_eleitos = candidatosEleitos;
 }
+
+std::list<Candidato*> Partido::getListaCandidatos() const {
+    return std::list<Candidato*>();
+}
+
+
 
