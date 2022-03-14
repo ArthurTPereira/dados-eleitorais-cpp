@@ -1,3 +1,4 @@
+#include <vector>
 #include "Partido.h"
 
 Partido::Partido(int nPartido, int votosLegenda,const std::string &nomePartido,const std::string &siglaPartido) {
@@ -5,6 +6,9 @@ Partido::Partido(int nPartido, int votosLegenda,const std::string &nomePartido,c
     this->votos_legenda = votosLegenda;
     this->nome_partido = nomePartido;
     this->sigla_partido = siglaPartido;
+    this->votos_totais = 0;
+    this->votos_nominais = 0;
+    this->candidatos_eleitos = 0;
 }
 
 int Partido::getNumeroPartido() const {
@@ -63,9 +67,20 @@ void Partido::setCandidatosEleitos(int candidatosEleitos) {
     candidatos_eleitos = candidatosEleitos;
 }
 
-std::list<Candidato*> Partido::getListaCandidatos() const {
-    return std::list<Candidato*>();
+std::vector<Candidato*> Partido::getListaCandidatos() {
+    return this->lista_candidatos;
 }
 
+void Partido::incrementaVotos(int votos) {
+    this->votos_nominais += votos;
+    this->votos_totais += votos;
+}
 
+void Partido::incrementaCandidatosEleitos() {
+    this->candidatos_eleitos++;
+}
+
+void Partido::adicionaCandidato(Candidato* p) {
+    this->lista_candidatos.push_back(p);
+}
 

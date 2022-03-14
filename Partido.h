@@ -14,7 +14,7 @@ class Partido {
     int votos_totais;
     int votos_nominais;
     int candidatos_eleitos;
-    std::list<Candidato*> lista_candidatos;
+    std::vector<Candidato*> lista_candidatos;
 
 public:
     Partido(int nPartido, int votosLegenda, const std::string &nomePartido, const std::string &siglaPartido);
@@ -47,7 +47,14 @@ public:
 
     void setCandidatosEleitos(int candidatosEleitos);
 
-    std::list<Candidato*> getListaCandidatos() const;
+    std::vector<Candidato*> getListaCandidatos();
+
+    void incrementaVotos(int votos);
+
+    void incrementaCandidatosEleitos();
+
+    void adicionaCandidato(Candidato* p);
+
 };
 
 
