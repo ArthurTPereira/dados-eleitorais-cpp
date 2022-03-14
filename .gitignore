@@ -57,3 +57,6 @@ test.sh
 *.exe
 *.out
 *.app
+candidatos.csv
+partidos.csv
+vereadores
