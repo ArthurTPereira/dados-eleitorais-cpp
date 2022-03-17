@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <clocale>
 #include "Partido.h"
 #include "Candidato.h"
 
@@ -21,6 +20,8 @@ int main(int argc, char* argv[]) {
         std::cout << "Erro: Argumentos insuficientes." << std::endl;
         std::exit(1);
     }
+
+    setlocale(LC_ALL,"pt_BR.UTF-8");
 
     std::string conteudoLinha = CSVparaLinha(argv[1]);
 
@@ -202,10 +203,10 @@ int main(int argc, char* argv[]) {
     for (Partido* p : listaPartidos) {
         if (p->getVotosTotais() != 0) {
             if (p->getVotosTotais() > 1) {
-                std::printf("%d - %s - %d, %d votos de legenda (%.2f%% do total do partido\n",pos,p->getSiglaPartido().c_str(),
+                std::printf("%d - %s - %d, %d votos de legenda (%.2f%% do total do partido)\n",pos,p->getSiglaPartido().c_str(),
                             p->getNumeroPartido(),p->getVotosLegenda(), 100.0 * p->getVotosLegenda()/p->getVotosTotais());
             } else {
-                std::printf("%d - %s - %d, %d voto de legenda (%.2f%% do total do partido\n",pos,p->getSiglaPartido().c_str(),
+                std::printf("%d - %s - %d, %d voto de legenda (%.2f%% do total do partido)\n",pos,p->getSiglaPartido().c_str(),
                             p->getNumeroPartido(),p->getVotosLegenda(), 100.0 * p->getVotosLegenda()/p->getVotosTotais());
             }
         } else {
@@ -217,7 +218,7 @@ int main(int argc, char* argv[]) {
 
     //Ordena os candidatos dos partidos na ordem decrescente de votos nominais, priorizando a idade do mais velho.
     for (Partido* p : listaPartidos) {
-        if (!p->getListaCandidatos().empty()) {
+        if (p->getListaCandidatos().empty()) {
             std::sort(p->getListaCandidatos().begin(), p->getListaCandidatos().end(),[](Candidato* c1, Candidato* c2) {
                 if (c1->getVotosNominais() != c2->getVotosNominais()) {
                     return c2->getVotosNominais() < c1->getVotosNominais();
@@ -229,26 +230,40 @@ int main(int argc, char* argv[]) {
         }
     }
 
-
     //Ordena os partidos por ordem decrescente de votos nominais do candidato mais votado de cada partido,
     // priorizando o número do partido
-    //como fas
+    std::sort(listaPartidos.begin(),listaPartidos.end(),[](Partido* p1, Partido* p2) {
+        if (p1->getListaCandidatos().empty() || p2->getListaCandidatos().empty()) {
+            return false;
+        }
+        else if (p1->getListaCandidatos()[0]->getVotosNominais() != p2->getListaCandidatos()[0]->getVotosNominais()) {
+            return p2->getListaCandidatos()[0]->getVotosNominais() < p1->getListaCandidatos()[0]->getVotosNominais();
+        }
+            return p1->getNumeroPartido() < p2->getNumeroPartido();
+    });
 
 
     pos = 1;
     //Imprime os primeiros e último colocados de cada partido (8)
     std::cout << "\nPrimeiro e último colocados de cada partido:" << std::endl;
+
     for (Partido* p : listaPartidos) {
         if (!p->getListaCandidatos().empty()) {
             if (p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getVotosNominais() > 1) {
+
+                //Imprime no formato especificado
                 std::cout << pos << " - " << p->getSiglaPartido() << " - " << p->getNumeroPartido() << ", " << p->getListaCandidatos()[0]->getNomeUrna() <<
                 " (" << p->getListaCandidatos()[0]->getNumero() << ", " << p->getListaCandidatos()[0]->getVotosNominais() << " votos) / " <<
                 p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getNomeUrna() << " (" << p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getNumero()
                 << ", " << p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getVotosNominais() << " votos)" << std::endl;
             } else {
 
+                //Imprime no formato especificado
+                std::cout << pos << " - " << p->getSiglaPartido() << " - " << p->getNumeroPartido() << ", " << p->getListaCandidatos()[0]->getNomeUrna() <<
+                          " (" << p->getListaCandidatos()[0]->getNumero() << ", " << p->getListaCandidatos()[0]->getVotosNominais() << " votos) / " <<
+                          p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getNomeUrna() << " (" << p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getNumero()
+                          << ", " << p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getVotosNominais() << " voto)" << std::endl;
             }
-
         }
         pos++;
     }
@@ -262,6 +277,14 @@ int main(int argc, char* argv[]) {
     int feminino = 0;
 
     for (Candidato* c : candidatosEleitos) {
+
+        //Verifica se é masculino ou feminino
+        if (c->getSexo() == "M") {
+            masculino++;
+        } else {
+            feminino++;
+        }
+
         //comparar as datas
     }
 
@@ -272,9 +295,9 @@ int main(int argc, char* argv[]) {
     std::cout << "\nEleitos, por faixa etária (na data da eleição):" << std::endl;
 
     //Imprime a distribuição de eleitos por sexo (10)
-    std::cout << "\n Eleitos, por sexo:" << std::endl;
-    std::cout << "Feminino:" << feminino << 100.0 * feminino / vagas << std::endl;
-    std::cout << "Masculino:" << masculino << 100.0 * masculino / vagas << std::endl;
+    std::cout << "Eleitos, por sexo:" << std::endl;
+    std::printf("Feminino: %d (%.2f%%)\n",feminino,100.0 * feminino / vagas);
+    std::printf("Masculino: %d (%.2f%%)\n",masculino,100.0 * masculino / vagas);
 
     int votos_validos = 0;
     int votos_nominais = 0;
@@ -282,16 +305,15 @@ int main(int argc, char* argv[]) {
 
     //Calcula os votos totais, nominais e de legenda
     for (Partido* p : listaPartidos) {
-
         votos_validos += p->getVotosTotais();
         votos_nominais += p->getVotosNominais();
         votos_legenda += p->getVotosLegenda();
     }
 
     //Imprime o total de votos, os nominais e os de legenda (11)
-    std::cout << "\nTotal de votos válidos:" << votos_validos << std::endl;
-    std::cout << "Total de votos nominais:" << votos_nominais << " (" << 100.0 * votos_nominais/votos_validos << ")" << std::endl;
-    std::cout << "Total de votos de legenda:" << votos_legenda << " (" << 100.0 * votos_legenda/votos_validos << ")"<< std::endl;
+    std::printf("\nTotal de votos válidos:    %d\n",votos_validos);
+    std::printf("Total de votos nominais:   %d (%.2f%%)\n",votos_nominais,100.0 * votos_nominais/votos_validos);
+    std::printf("Total de votos de legenda: %d (%.2f%%)\n",votos_legenda,100.0 * votos_legenda/votos_validos);
 
     //Libera a memória alocada para os candidatos e partidos
     for (Candidato* c : listaCandidatos) {
