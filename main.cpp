@@ -7,6 +7,7 @@
 #include "Partido.h"
 #include "Candidato.h"
 
+//Função que transforma o CSV em uma String
 std::string CSVparaLinha(const std::string& path) {
     auto var = std::ostringstream{};
     std::ifstream arquivo(path);
@@ -16,15 +17,19 @@ std::string CSVparaLinha(const std::string& path) {
 
 int main(int argc, char* argv[]) {
 
+    //Verifica se a quantidade de argumentos estão corretos
     if (argc != 4) {
         std::cout << "Erro: Argumentos insuficientes." << std::endl;
         std::exit(1);
     }
 
+    //Define o LOCALE para o Brasil
     setlocale(LC_ALL,"pt_BR.UTF-8");
 
+    //Chama a função que transforma o CSV de candidatos em linha
     std::string conteudoLinha = CSVparaLinha(argv[1]);
 
+    //Definição de variáveis para a leitura do CSV candidatos
     std::list<std::vector<std::string>> csvCandidatos;
     std::istringstream stringCandidatos(conteudoLinha);
     std::string linha;
@@ -35,23 +40,34 @@ int main(int argc, char* argv[]) {
         std::vector<std::string> linhaCsv;
 
         while (getline(ls,candidato,',')) {
+
+            //Adiciona cada coluna do candidato ao vetor de linha do CSV
             linhaCsv.push_back(candidato);
         }
+        //Adiciona cada linha de candidato ao vetor de linhas do CSV
         csvCandidatos.push_back(linhaCsv);
     }
 
+    //Vetor com a lista de candidatos
     std::vector<Candidato*> listaCandidatos;
     int counter = 0;
     for (auto& dado : csvCandidatos) {
+
+        //Ignora a primeira linha do CSV
         if (counter == 0) {
             counter++;
             continue;
         }
+
+        //Cria um candidato e adiciona a lista de candidatos
         Candidato* candidato = new Candidato(std::stoi(dado[0]),std::stoi(dado[1]),dado[2],dado[3],dado[4],dado[5],dado[6],dado[7],std::stoi(dado[8]));
         listaCandidatos.push_back(candidato);
     }
 
+    //Chama a função que transforma o CSV de partidos em linha
     conteudoLinha = CSVparaLinha(argv[2]);
+
+    //Definição de variáveis para a leitura do CSV partidos
     std::list<std::vector<std::string>> csvPartidos;
     std::istringstream stringPartidos(conteudoLinha);
     std::vector<Partido*> listaPartidos;
@@ -62,22 +78,31 @@ int main(int argc, char* argv[]) {
         std::vector<std::string> linhaCsv;
 
         while (getline(ls,partido,',')) {
+
+            //Adiciona cada coluna do partido ao vetor de linha do CSV
             linhaCsv.push_back(partido);
         }
+
+        //Adiciona cada linha de partido ao vetor de linhas do CSV
         csvPartidos.push_back(linhaCsv);
     }
 
     counter = 0;
     for (auto& dado : csvPartidos) {
+
+        //Ignora a primeira linha do CSV
         if (counter == 0) {
             counter++;
             continue;
         }
+
+        //Cria os partidos e adiciona a lista de partidos
         Partido* partido = new Partido(std::stoi(dado[0]),std::stoi(dado[1]),dado[2],dado[3]);
-        partido->setVotosTotais(partido->getVotosLegenda());
+        partido->setVotosTotais(partido->getVotosLegenda()); //Define inicialmente os votos totais sendo os de legenda
         listaPartidos.push_back(partido);
     }
 
+    //Ordena a lista de candidatos na ordem decrescente de votos nominais, priorizando o mais velho
     std::sort(listaCandidatos.begin(),listaCandidatos.end(),[](Candidato* c1, Candidato* c2) {
         if (c1->getVotosNominais() != c2->getVotosNominais()) {
             return c2->getVotosNominais() < c1->getVotosNominais();
@@ -85,6 +110,7 @@ int main(int argc, char* argv[]) {
         return c2->getDataNasc() < c1->getDataNasc();
     });
 
+    //Vetor de candidatos eleitos
     std::vector<Candidato*> candidatosEleitos;
     int vagas = 0;
 
@@ -114,13 +140,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
-
-
     //Imprime a quantidade de candidatos eleitos (1)
     std::cout << "Número de vagas: " << vagas << "\n" << std::endl;
-
-
-
 
     int pos = 1;
     //Imprime os vereadores eleitos, na ordem decrescente de votos (2)
@@ -137,8 +158,6 @@ int main(int argc, char* argv[]) {
         std::cout << pos << " - " << listaCandidatos[i]->getNome() << " / " << listaCandidatos[i]->getNomeUrna() << " (" << listaCandidatos[i]->getPartido()->getSiglaPartido() << ", "<< listaCandidatos[i]->getVotosNominais() << " votos)" << std::endl;
         pos++;
     }
-
-
 
     //Imprime os candidatos que teriam sido eleitos, caso a votação fosse majoritária (4)
     std::cout << "\nTeriam sido eleitos se a votação fosse majoritária, e não foram eleitos:" << std::endl;
@@ -242,7 +261,6 @@ int main(int argc, char* argv[]) {
             return p1->getNumeroPartido() < p2->getNumeroPartido();
     });
 
-
     pos = 1;
     //Imprime os primeiros e último colocados de cada partido (8)
     std::cout << "\nPrimeiro e último colocados de cada partido:" << std::endl;
@@ -267,9 +285,6 @@ int main(int argc, char* argv[]) {
         }
         pos++;
     }
-
-
-
 
     //Variaveis para imprimir os itens 9 e 10
     int intervalos[] = {0,0,0,0,0}; // Cada posição indica um dos intervalos determinados, em ordem
