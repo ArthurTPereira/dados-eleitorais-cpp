@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Partido.h"
 #include "Candidato.h"
+#include "Data.h"
 
 //Função que transforma o CSV em uma String
 std::string CSVparaLinha(const std::string& path) {
@@ -107,7 +108,14 @@ int main(int argc, char* argv[]) {
         if (c1->getVotosNominais() != c2->getVotosNominais()) {
             return c2->getVotosNominais() < c1->getVotosNominais();
         }
-        return c2->getDataNasc() < c1->getDataNasc();
+
+        Data d1(c1->getDataNasc());
+        Data d2(c2->getDataNasc());
+        int diasC1 = d1.getDiasTotais();
+        int diasC2 = d2.getDiasTotais();
+
+        return diasC2 < diasC1;
+
     });
 
     //Vetor de candidatos eleitos
@@ -243,8 +251,12 @@ int main(int argc, char* argv[]) {
                     return c2->getVotosNominais() < c1->getVotosNominais();
                 }
 
-                return c2->getDataNasc() < c1->getDataNasc();
-                //fazer comparacao correta
+                Data d1(c1->getDataNasc());
+                Data d2(c2->getDataNasc());
+                int diasC1 = d1.getDiasTotais();
+                int diasC2 = d2.getDiasTotais();
+
+                return diasC2 < diasC1;
             });
         }
     }
@@ -300,17 +312,36 @@ int main(int argc, char* argv[]) {
             feminino++;
         }
 
-        //comparar as datas
+        Data d1(c->getDataNasc());
+        std::string var = argv[3];
+        Data d2(var);
+        if (d1.anosEntreDatas(&d2,&d1) < 30) {
+            intervalos[0]++;
+        }
+        else if (d1.anosEntreDatas(&d2,&d1) >= 30 && d1.anosEntreDatas(&d2,&d1) < 40) {
+            intervalos[1]++;
+        }
+        else if (d1.anosEntreDatas(&d2,&d1) >= 40 && d1.anosEntreDatas(&d2,&d1) < 50) {
+            intervalos[2]++;
+        }
+        else if (d1.anosEntreDatas(&d2,&d1) >= 50 && d1.anosEntreDatas(&d2,&d1) < 60) {
+            intervalos[3]++;
+        }
+        else {
+            intervalos[4]++;
+        }
     }
-
-
-
 
     //Imprime a distribuição de eleitos por faixa etária, considerando a idade do candidato no dia da eleição (9)
     std::cout << "\nEleitos, por faixa etária (na data da eleição):" << std::endl;
+    std::printf("      Idade < 30: %d (%.2f%%)\n",intervalos[0], 100.0 * intervalos[0] / vagas);
+    std::printf("30 <= Idade < 40: %d (%.2f%%)\n",intervalos[1], 100.0 * intervalos[1] / vagas);
+    std::printf("40 <= Idade < 50: %d (%.2f%%)\n",intervalos[2], 100.0 * intervalos[2] / vagas);
+    std::printf("50 <= Idade < 60: %d (%.2f%%)\n",intervalos[3], 100.0 * intervalos[3] / vagas);
+    std::printf("60 <= Idade:      %d (%.2f%%)\n",intervalos[4], 100.0 * intervalos[4] / vagas);
 
     //Imprime a distribuição de eleitos por sexo (10)
-    std::cout << "Eleitos, por sexo:" << std::endl;
+    std::cout << "\nEleitos, por sexo:" << std::endl;
     std::printf("Feminino: %d (%.2f%%)\n",feminino,100.0 * feminino / vagas);
     std::printf("Masculino: %d (%.2f%%)\n",masculino,100.0 * masculino / vagas);
 
