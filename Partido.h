@@ -47,7 +47,7 @@ public:
 
     void setCandidatosEleitos(int candidatosEleitos);
 
-    std::vector<Candidato*> getListaCandidatos();
+    std::vector<Candidato*>& getListaCandidatos();
 
     void incrementaVotos(int votos);
 

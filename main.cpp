@@ -16,6 +16,13 @@ std::string CSVparaLinha(const std::string& path) {
     return var.str();
 }
 
+//Função para fazer o trim de algumas strings com espaços nos CSV
+static inline std::string &rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+                         std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
 int main(int argc, char* argv[]) {
 
     //Verifica se a quantidade de argumentos estão corretos
@@ -54,6 +61,10 @@ int main(int argc, char* argv[]) {
     int counter = 0;
     for (auto& dado : csvCandidatos) {
 
+        //Verifica e faz o trim das strings do CSV
+        for (int i = 0; i < 9; ++i) {
+            dado[i] = rtrim(dado[i]);
+        }
         //Ignora a primeira linha do CSV
         if (counter == 0) {
             counter++;
@@ -201,12 +212,16 @@ int main(int argc, char* argv[]) {
     pos = 1;
     for (Partido* p : listaPartidos) {
         if (p->getVotosNominais() > 1) {
-            //plural e singular
-            //std::cout << pos << " - " << p->getSiglaPartido() << " - " << p->getNumeroPartido() << ", " << p->getVotosTotais() << " voto (" <<
-            //            p->getVotosNominais() << "nominal e " << p->getVotosLegenda() << " de legenda), " << p->getCandidatosEleitos() << "candidato eleito" << std::endl;
+            if (p->getCandidatosEleitos() > 1) {
+                std::cout << pos << " - " << p->getSiglaPartido() << " - " << p->getNumeroPartido() << ", " << p->getVotosTotais() << " votos (" <<
+                          p->getVotosNominais() << " nominais e " << p->getVotosLegenda() << " de legenda), " << p->getCandidatosEleitos() << " candidatos eleitos" << std::endl;
+            } else {
+                std::cout << pos << " - " << p->getSiglaPartido() << " - " << p->getNumeroPartido() << ", " << p->getVotosTotais() << " votos (" <<
+                          p->getVotosNominais() << " nominais e " << p->getVotosLegenda() << " de legenda), " << p->getCandidatosEleitos() << " candidato eleito" << std::endl;
+            }
         } else {
             std::cout << pos << " - " << p->getSiglaPartido() << " - " << p->getNumeroPartido() << ", " << p->getVotosTotais() << " voto (" <<
-            p->getVotosNominais() << "nominal e " << p->getVotosLegenda() << " de legenda), " << p->getCandidatosEleitos() << "candidato eleito" << std::endl;
+                      p->getVotosNominais() << " nominal e " << p->getVotosLegenda() << " de legenda), " << p->getCandidatosEleitos() << " candidato eleito" << std::endl;
         }
         pos++;
     }
@@ -238,14 +253,14 @@ int main(int argc, char* argv[]) {
             }
         } else {
             std::cout << pos << " - " << p->getSiglaPartido() << " - " << p->getNumeroPartido() << ", " << p->getVotosLegenda() <<
-            " voto de legenda (porporção não calculada, 0 voto no partido)" << std::endl;
+            " voto de legenda (proporção não calculada, 0 voto no partido)" << std::endl;
         }
         pos++;
     }
 
     //Ordena os candidatos dos partidos na ordem decrescente de votos nominais, priorizando a idade do mais velho.
     for (Partido* p : listaPartidos) {
-        if (p->getListaCandidatos().empty()) {
+        if (!p->getListaCandidatos().empty()) {
             std::sort(p->getListaCandidatos().begin(), p->getListaCandidatos().end(),[](Candidato* c1, Candidato* c2) {
                 if (c1->getVotosNominais() != c2->getVotosNominais()) {
                     return c2->getVotosNominais() < c1->getVotosNominais();
@@ -256,7 +271,7 @@ int main(int argc, char* argv[]) {
                 int diasC1 = d1.getDiasTotais();
                 int diasC2 = d2.getDiasTotais();
 
-                return diasC2 < diasC1;
+                return diasC2 > diasC1;
             });
         }
     }
@@ -265,12 +280,12 @@ int main(int argc, char* argv[]) {
     // priorizando o número do partido
     std::sort(listaPartidos.begin(),listaPartidos.end(),[](Partido* p1, Partido* p2) {
         if (p1->getListaCandidatos().empty() || p2->getListaCandidatos().empty()) {
-            return false;
+
         }
         else if (p1->getListaCandidatos()[0]->getVotosNominais() != p2->getListaCandidatos()[0]->getVotosNominais()) {
             return p2->getListaCandidatos()[0]->getVotosNominais() < p1->getListaCandidatos()[0]->getVotosNominais();
         }
-            return p1->getNumeroPartido() < p2->getNumeroPartido();
+            return p1->getNumeroPartido() > p2->getNumeroPartido();
     });
 
     pos = 1;
@@ -294,8 +309,8 @@ int main(int argc, char* argv[]) {
                           p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getNomeUrna() << " (" << p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getNumero()
                           << ", " << p->getListaCandidatos()[p->getListaCandidatos().size() - 1]->getVotosNominais() << " voto)" << std::endl;
             }
+            pos++;
         }
-        pos++;
     }
 
     //Variaveis para imprimir os itens 9 e 10
@@ -338,11 +353,11 @@ int main(int argc, char* argv[]) {
     std::printf("30 <= Idade < 40: %d (%.2f%%)\n",intervalos[1], 100.0 * intervalos[1] / vagas);
     std::printf("40 <= Idade < 50: %d (%.2f%%)\n",intervalos[2], 100.0 * intervalos[2] / vagas);
     std::printf("50 <= Idade < 60: %d (%.2f%%)\n",intervalos[3], 100.0 * intervalos[3] / vagas);
-    std::printf("60 <= Idade:      %d (%.2f%%)\n",intervalos[4], 100.0 * intervalos[4] / vagas);
+    std::printf("60 <= Idade     : %d (%.2f%%)\n",intervalos[4], 100.0 * intervalos[4] / vagas);
 
     //Imprime a distribuição de eleitos por sexo (10)
     std::cout << "\nEleitos, por sexo:" << std::endl;
-    std::printf("Feminino: %d (%.2f%%)\n",feminino,100.0 * feminino / vagas);
+    std::printf("Feminino:  %d (%.2f%%)\n",feminino,100.0 * feminino / vagas);
     std::printf("Masculino: %d (%.2f%%)\n",masculino,100.0 * masculino / vagas);
 
     int votos_validos = 0;

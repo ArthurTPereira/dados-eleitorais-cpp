@@ -8,7 +8,7 @@ class Data {
     int ano;
 
 public:
-    Data(std::string data);
+    explicit Data(std::string data);
 
     int getDia() const;
 

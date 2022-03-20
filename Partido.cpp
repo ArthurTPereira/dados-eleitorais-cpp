@@ -67,7 +67,7 @@ void Partido::setCandidatosEleitos(int candidatosEleitos) {
     candidatos_eleitos = candidatosEleitos;
 }
 
-std::vector<Candidato*> Partido::getListaCandidatos() {
+std::vector<Candidato*>& Partido::getListaCandidatos() {
     return this->lista_candidatos;
 }
 
